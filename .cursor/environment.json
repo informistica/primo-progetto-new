@@ -1,0 +1,12 @@
+{
+  "name": "primo-progetto-new (Django 5)",
+  "install": "bash .cursor/install.sh",
+  "start": "./.venv/bin/python manage.py migrate --noinput",
+  "terminals": [
+    {
+      "name": "django-runserver",
+      "command": "./.venv/bin/python manage.py runserver 0.0.0.0:8000"
+    }
+  ],
+  "ports": [8000]
+}

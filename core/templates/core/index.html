@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>primo-progetto-new · Tasks</title>
+    <style>
+        :root { color-scheme: light dark; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            margin: 0;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 3rem 1rem;
+        }
+        .card {
+            width: 100%;
+            max-width: 640px;
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,.4);
+        }
+        h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
+        .subtitle { margin: 0 0 1.5rem; color: #94a3b8; font-size: .9rem; }
+        .stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .stat {
+            flex: 1;
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .stat b { display: block; font-size: 1.6rem; color: #38bdf8; }
+        .stat span { font-size: .75rem; color: #94a3b8; text-transform: uppercase; }
+        form.add { display: flex; gap: .5rem; margin-bottom: 1.5rem; }
+        input[type=text] {
+            flex: 1;
+            padding: .7rem .9rem;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: .7rem 1rem;
+            font-size: .9rem;
+            cursor: pointer;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: 600;
+        }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            padding: .75rem;
+            border-radius: 10px;
+            background: #0f172a;
+            margin-bottom: .5rem;
+        }
+        li .title { flex: 1; }
+        li.done .title { text-decoration: line-through; color: #64748b; }
+        .btn-ghost { background: transparent; color: #94a3b8; padding: .4rem .6rem; }
+        .btn-toggle { background: #22c55e; color: #052e16; }
+        .btn-toggle.undo { background: #f59e0b; color: #451a03; }
+        .empty { color: #64748b; text-align: center; padding: 1.5rem 0; }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <h1>Task board</h1>
+        <p class="subtitle">Django 5 greenfield rebuild · primo-progetto-new</p>
+
+        <div class="stats">
+            <div class="stat"><b>{{ stats.total }}</b><span>Total</span></div>
+            <div class="stat"><b>{{ stats.done }}</b><span>Done</span></div>
+        </div>
+
+        <form class="add" method="post" action="{% url 'core:add_task' %}">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="Add a task…" autofocus required>
+            <button type="submit">Add</button>
+        </form>
+
+        <ul>
+            {% for task in tasks %}
+            <li class="{% if task.done %}done{% endif %}">
+                <span class="title">{{ task.title }}</span>
+                <form method="post" action="{% url 'core:toggle_task' task.pk %}">
+                    {% csrf_token %}
+                    <button class="btn-toggle {% if task.done %}undo{% endif %}" type="submit">
+                        {% if task.done %}Undo{% else %}Done{% endif %}
+                    </button>
+                </form>
+                <form method="post" action="{% url 'core:delete_task' task.pk %}">
+                    {% csrf_token %}
+                    <button class="btn-ghost" type="submit">Delete</button>
+                </form>
+            </li>
+            {% empty %}
+            <li class="empty">No tasks yet — add your first one above.</li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
